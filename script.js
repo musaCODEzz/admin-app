@@ -12,7 +12,7 @@ app.set('view engine', 'ejs');
 const Payment = require('./public/paymentModel');
 
 
-mongoose.connect('mongodb+srv://Admin:admin123@cluster0.pghdyh2.mongodb.net/?retryWrites=true&w=majority').then(() => {
+mongoose.connect('mongodb+srv://administrator:admin123@cluster0.duuu1iz.mongodb.net/?retryWrites=true&w=majority').then(() => {
     console.log("Connected to MongoDB");
 }).catch((error) => {
     console.log(error.message);
@@ -102,7 +102,7 @@ app.post('/stkPush', generateToken,  async( req, res) => {
                 PartyA: `254${phone}`,    
                 PartyB: shortCode,    
                 PhoneNumber: `254${phone}`,    
-                CallBackURL:"https://silent-mouse-67.telebit.io/callback",    
+                CallBackURL:"https://silent-mouse-67.telebit.io/callback",   
                 AccountReference:"Test",    
                 TransactionDesc:"Test"
             },
