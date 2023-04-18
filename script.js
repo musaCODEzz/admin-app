@@ -1,10 +1,12 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
 const mongoose = require('mongoose');
 const ejs = require('ejs');
+const session = require('express-session');
 const app = express();
-const port = 3000;
+const port = process.env.PORT;
 const path = require('path');
 
 app.set('view engine', 'ejs');
@@ -14,6 +16,11 @@ const Payment = require('./public/paymentModel');
 
 mongoose.connect('mongodb+srv://administrator:admin123@cluster0.duuu1iz.mongodb.net/?retryWrites=true&w=majority').then(() => {
     console.log("Connected to MongoDB");
+    app.listen(port, () => {
+        console.log(`Example app listening at http://localhost:${port}`)
+    });
+    
+    
 }).catch((error) => {
     console.log(error.message);
 });
@@ -36,8 +43,6 @@ app.get('/payments', (req, res) => {
             paymentList: payments
         })
     })
-
-
 });
 
 app.use(express.static(__dirname));
@@ -49,13 +54,11 @@ app.get('/', (req, res) => {
 
     res.sendFile(path.join(__dirname + '/index.html'));
 
-   
-
 });
 
 const generateToken = async( req, res, next) => {
-    const secret = "LcjDnANjEMykLge5";
-    const consumer = "CA9HkTEzuH1HXuZzHmHs7AGyDIercU0q";
+    const secret = process.env.CONSUMERSECRET;
+    const consumer = process.env.CONSUMERKEY;
     const auth = new Buffer.from(`${consumer}:${secret}`).toString('base64');
 
     await axios.get("https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials", {
@@ -68,11 +71,8 @@ const generateToken = async( req, res, next) => {
         next();
     }).catch((error) => {
         console.log(error);
-        //res.status(400).json(error.message);
+        
     })
-
-
-
 } 
 
 app.post('/stkPush', generateToken,  async( req, res) => {
@@ -86,8 +86,8 @@ app.post('/stkPush', generateToken,  async( req, res) => {
                 ("0" + date.getHours()).slice(-2) +
                 ("0" + date.getMinutes()).slice(-2) +
                 ("0" + date.getSeconds()).slice(-2);
-    const shortCode = "174379";
-    const passKey = "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919";
+    const shortCode = process.env.SHORTCODE;
+    const passKey = process.env.PASSKEY;
     const password = new Buffer.from(shortCode + passKey + timestamp).toString('base64');
          
         await axios.post(
@@ -157,10 +157,6 @@ app.post("/callback", (req, res) => {
 
 
 
-
-app.listen(port, () => {
-    console.log(`Example app listening at http://localhost:${port}`)
-});
 
 
 
