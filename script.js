@@ -12,6 +12,7 @@ const path = require('path');
 app.set('view engine', 'ejs');
 
 const Payment = require('./public/paymentModel');
+const Signup = require('./public/signupModel');
 
 
 mongoose.connect('mongodb+srv://administrator:admin123@cluster0.duuu1iz.mongodb.net/?retryWrites=true&w=majority').then(() => {
@@ -45,16 +46,38 @@ app.get('/payments', (req, res) => {
     })
 });
 
-app.use(express.static(__dirname));
+
+async function getSignup(){
+    const Signups = await Signup.find({});
+    return Signups;
+
+}
+
+app.get('/signups', (req, res) => {
+
+    getSignup().then(function (signups){
+        res.render('members',{
+            signupList: signups
+        })
+    })
+});
 
 
-app.use(express.static("public"));
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', (req, res) => {
 
     res.sendFile(path.join(__dirname + '/index.html'));
 
 });
+
+app.get('/login', (req, res) => {
+
+    res.sendFile(path.join(__dirname + '/public/signup.html'));
+
+});
+    
+
 
 const generateToken = async( req, res, next) => {
     const secret = process.env.CONSUMERSECRET;
@@ -153,7 +176,36 @@ app.post("/callback", (req, res) => {
     }
     );
 
-})
+});
+
+app.post('/signup', (req, res) => {
+    const name = req.body.name;
+    const email = req.body.email;
+    const password = req.body.password;
+    const signup = new Signup({
+        name: name,
+        email: email,
+        password: password
+    });
+
+    signup.save().then((data) => {
+        console.log(data);
+        res.status(200).json({message: "Signup successful", data});
+    }
+    ).catch((error) => {
+        console.log(error);
+        res.status(400).json(error.message);
+    }
+    );
+});
+
+
+
+
+
+
+
+
 
 
 
