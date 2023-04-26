@@ -11,8 +11,8 @@ const path = require('path');
 
 app.set('view engine', 'ejs');
 
-const Payment = require('./public/paymentModel');
-const Signup = require('./public/signupModel');
+const Payment = require('./public/js/paymentModel');
+const Signup = require('./public/js/signupModel');
 
 
 mongoose.connect('mongodb+srv://administrator:admin123@cluster0.duuu1iz.mongodb.net/?retryWrites=true&w=majority').then(() => {
@@ -67,13 +67,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', (req, res) => {
 
-    res.sendFile(path.join(__dirname + '/index.html'));
+    res.sendFile(path.join(__dirname + '/public/index.html'));
 
 });
 
 app.get('/login', (req, res) => {
 
-    res.sendFile(path.join(__dirname + '/public/signup.html'));
+    res.sendFile(path.join(__dirname + '/public/html/signup.html'));
 
 });
     
